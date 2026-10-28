@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Доступ заблокирован";
+    var domain = ViewBag.Domain as string ?? "неизвестный сайт";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5 text-center">
+
+                    <h4 class="fw-semibold text-secondary mb-3">Доступ запрещён</h4>
+
+                    <p class="fs-5 mb-2">
+                        Сайт <span class="fw-medium">@domain</span> не доступен
+                    </p>
+                    <p class="text-muted small mb-4">
+                        Этот ресурс не входит в перечень разрешённых для вас сервисов.
+                        Для получения доступа подайте заявку на согласование.
+                    </p>
+
+                    <hr class="my-4" style="max-width: 120px; margin-inline: auto; opacity: 0.4;">
+
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        <a asp-controller="Requests" asp-action="Create"
+                           class="btn btn-primary px-4 py-2">
+                            Подать заявку
+                        </a>
+                        <a href="/" class="btn btn-outline-secondary px-4 py-2">
+                            На главную
+                        </a>
+                    </div>
+
+                    <p class="text-muted small mt-4 mb-0" style="font-size: 0.85rem;">
+                        Заявка будет направлена вашему руководителю
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

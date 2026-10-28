@@ -1,0 +1,82 @@
+@model CreateAccessRequestViewModel
+@{
+    ViewData["Title"] = "Новая заявка";
+}
+
+<div class="card p-4">
+    <h3 class="mb-3">Заявка на доступ к сервису</h3>
+
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <form asp-controller="Requests" asp-action="Create" method="post">
+        <div class="mb-3">
+            <label asp-for="ServiceId" class="form-label">Выберите сервис из списка</label>
+            <select asp-for="ServiceId" class="form-select">
+                <option value="">— не из списка, укажу вручную —</option>
+                @foreach (var service in Model.AvailableServices)
+                {
+                    <option value="@service.Id">@service.Name</option>
+                }
+            </select>
+        </div>
+
+        <p class="text-center text-muted my-2">— или —</p>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="CustomServiceName" class="form-label"></label>
+                <input asp-for="CustomServiceName" class="form-control" placeholder="Например, Notion" />
+            </div>
+            <div class="col-md-6 mb-3">
+                <label asp-for="CustomServiceUrl" class="form-label"></label>
+                <input asp-for="CustomServiceUrl" class="form-control" placeholder="https://..." />
+                <span asp-validation-for="CustomServiceUrl" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Justification" class="form-label"></label>
+            <textarea asp-for="Justification" class="form-control" rows="3" placeholder="Зачем нужен доступ"></textarea>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="DurationPreset" class="form-label"></label>
+                <select asp-for="DurationPreset" asp-items="Html.GetEnumSelectList<DurationPreset>()" class="form-select"></select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="AccessFrom" class="form-label"></label>
+                <input asp-for="AccessFrom" class="form-control" type="date" />
+                <span asp-validation-for="AccessFrom" class="text-danger"></span>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="AccessTo" class="form-label"></label>
+                <input asp-for="AccessTo" class="form-control" type="date" />
+                <span asp-validation-for="AccessTo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Отправить заявку</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const presetSelect = document.querySelector('[name="DurationPreset"]');
+        const fromInput = document.querySelector('[name="AccessFrom"]');
+        const toInput = document.querySelector('[name="AccessTo"]');
+
+        const daysByPreset = { '1': 7, '2': 30, '3': 90, '4': 182, '5': 365 };
+
+        function applyPreset() {
+            const days = daysByPreset[presetSelect.value];
+            if (!days || !fromInput.value) return;
+            const from = new Date(fromInput.value);
+            from.setDate(from.getDate() + days);
+            toInput.value = from.toISOString().slice(0, 10);
+        }
+
+        presetSelect?.addEventListener('change', applyPreset);
+        fromInput?.addEventListener('change', applyPreset);
+    </script>
+}

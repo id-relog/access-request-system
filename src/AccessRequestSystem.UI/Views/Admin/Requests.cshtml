@@ -1,0 +1,84 @@
+@model List<AccessRequestDto>
+@{
+    ViewData["Title"] = "Все заявки";
+    var selected = ViewBag.SelectedStatus as RequestStatus?;
+
+    string BadgeClass(RequestStatus status) => status switch
+    {
+        RequestStatus.Pending => "bg-warning text-dark",
+        RequestStatus.Approved => "bg-success",
+        RequestStatus.Rejected => "bg-danger",
+        RequestStatus.Expired => "bg-secondary",
+        _ => "bg-secondary"
+    };
+}
+
+<h3 class="mb-3">Все заявки</h3>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">Все статусы</option>
+            @foreach (RequestStatus s in Enum.GetValues(typeof(RequestStatus)))
+            {
+                <option value="@((int)s)" selected="@(selected == s)">@s</option>
+            }
+        </select>
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Заявок с таким фильтром нет.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover bg-white align-middle">
+            <thead>
+                <tr>
+                    <th>Сотрудник</th>
+                    <th>Сервис</th>
+                    <th>Обоснование</th>
+                    <th>Период</th>
+                    <th>Статус</th>
+                    <th>Решение</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>@r.EmployeeFullName</td>
+                        <td>
+                            @r.ServiceName
+                            @if (r.ServiceUrl is not null)
+                            {
+                                <br />
+                                <a href="@r.ServiceUrl" target="_blank" class="small">@r.ServiceUrl</a>
+                            }
+                        </td>
+                        <td class="small">@r.Justification</td>
+                        <td>@r.AccessFrom.ToString("dd.MM.yyyy") — @r.AccessTo.ToString("dd.MM.yyyy")</td>
+                        <td><span class="badge @BadgeClass(r.Status)">@r.Status</span></td>
+                        <td>
+                            @if (r.Status == RequestStatus.Pending)
+                            {
+                                <form asp-controller="Admin" asp-action="Decide" method="post" class="d-flex gap-1">
+                                    <input type="hidden" name="RequestId" value="@r.Id" />
+                                    <input type="text" name="Comment" class="form-control form-control-sm" placeholder="Комментарий" />
+                                    <button type="submit" name="Approve" value="true" class="btn btn-sm btn-success">Одобрить</button>
+                                    <button type="submit" name="Approve" value="false" class="btn btn-sm btn-danger">Отклонить</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="text-muted small">@r.ReviewComment</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

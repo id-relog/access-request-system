@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Добро пожаловать";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card p-4 p-md-5">
+            <h2 class="mb-3">Система заявок на доступ к сайтам</h2>
+            <p class="text-muted mb-4">
+                Интернет через рабочий прокси открывается только к согласованным ресурсам.
+                Сначала войдите в портал, затем — тем же логином в окне браузера (прокси).
+            </p>
+
+            <ol class="mb-4">
+                <li class="mb-2"><strong>Зарегистрируйтесь</strong> или войдите на этом сайте (email и пароль).</li>
+                <li class="mb-2">Заполните <strong>анкету</strong> сотрудника.</li>
+                <li class="mb-2">Когда Chrome спросит логин прокси — введите <strong>те же</strong> email и пароль.</li>
+                <li class="mb-2">После этого вы автоматически попадёте в свой аккаунт на портале (второй раз вводить не нужно).</li>
+                <li class="mb-2">Нужный сайт закрыт — нажмите «Подать заявку». Администратор одобрит доступ.</li>
+            </ol>
+
+            <div class="d-flex flex-wrap gap-2">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a class="btn btn-primary" asp-controller="Requests" asp-action="My">Мои заявки</a>
+                    <a class="btn btn-outline-primary" asp-controller="Requests" asp-action="Create">Новая заявка</a>
+                }
+                else
+                {
+                    <a class="btn btn-primary" asp-controller="Account" asp-action="Login">Войти</a>
+                    <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Register">Регистрация</a>
+                }
+            </div>
+
+            <p class="text-muted small mt-4 mb-0">
+                Смена сотрудника на этом компьютере: нажмите «Выйти» на портале — браузер снова запросит логин прокси.
+            </p>
+        </div>
+    </div>
+</div>

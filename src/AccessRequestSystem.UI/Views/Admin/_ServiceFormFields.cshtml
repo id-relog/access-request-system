@@ -1,0 +1,32 @@
+@model ServiceFormViewModel
+
+<div class="mb-3">
+    <label asp-for="Name" class="form-label"></label>
+    <input asp-for="Name" class="form-control" />
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Description" class="form-label"></label>
+    <textarea asp-for="Description" class="form-control" rows="2"></textarea>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Url" class="form-label"></label>
+    <input asp-for="Url" class="form-control" placeholder="https://..." />
+    <span asp-validation-for="Url" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="RelatedDomains" class="form-label"></label>
+    <input asp-for="RelatedDomains" class="form-control" placeholder="googlevideo.com, ytimg.com, ggpht.com" />
+    <div class="form-text">
+        Домены, без которых сайт не откроется, но которые отличаются от основного (CDN, видео и т.д.).
+        Поддомены основной ссылки (например, www.) подходят автоматически и здесь не нужны.
+    </div>
+</div>
+
+<div class="form-check mb-3">
+    <input asp-for="IsActive" class="form-check-input" />
+    <label asp-for="IsActive" class="form-check-label"></label>
+</div>

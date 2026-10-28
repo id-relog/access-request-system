@@ -1,0 +1,53 @@
+@model List<ServiceDto>
+@{
+    ViewData["Title"] = "Справочник сервисов";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Справочник сервисов</h3>
+    <a class="btn btn-primary" asp-controller="Admin" asp-action="CreateService">+ Добавить сервис</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-hover bg-white align-middle">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Описание</th>
+                <th>Домен(ы)</th>
+                <th>Статус</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.Name @if (s.IsBuiltIn) { <span class="badge bg-light text-dark border">встроенный</span> }</td>
+                    <td class="small">@s.Description</td>
+                    <td class="small">
+                        <code>@s.Domain</code>
+                        @if (!string.IsNullOrWhiteSpace(s.RelatedDomains))
+                        {
+                            <br />
+                            <span class="text-muted">+ @s.RelatedDomains</span>
+                        }
+                    </td>
+                    <td>
+                        @if (s.IsActive)
+                        {
+                            <span class="badge bg-success">активен</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">скрыт</span>
+                        }
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Admin" asp-action="EditService" asp-route-id="@s.Id">Изменить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

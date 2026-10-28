@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — Доступ к сервисам</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Account" asp-action="Welcome">Доступ к сервисам</a>
+            <div class="navbar-nav me-auto">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a class="nav-link" asp-controller="Requests" asp-action="My">Мои заявки</a>
+                    <a class="nav-link" asp-controller="Requests" asp-action="Create">Новая заявка</a>
+                    <a class="nav-link" asp-controller="Profile" asp-action="Edit">Анкета</a>
+                    @if (User.IsInRole(Roles.Administrator))
+                    {
+                        <a class="nav-link" asp-controller="Admin" asp-action="Requests">Все заявки</a>
+                        <a class="nav-link" asp-controller="Admin" asp-action="Services">Справочник сервисов</a>
+                        <a class="nav-link" asp-controller="Admin" asp-action="AccessLogs">Логи доступа</a>
+                    }
+                }
+                else
+                {
+                    <a class="nav-link" asp-controller="Account" asp-action="Welcome">Как это работает</a>
+                }
+            </div>
+            <div class="navbar-nav">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span class="navbar-text text-light me-3">@User.Identity!.Name</span>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-light btn-sm">Выйти</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="nav-link" asp-controller="Account" asp-action="Login">Войти</a>
+                    <a class="nav-link" asp-controller="Account" asp-action="Register">Регистрация</a>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        @if (TempData["Success"] is string success)
+        {
+            <div class="alert alert-success">@success</div>
+        }
+        @if (TempData["Error"] is string error)
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+
+        @RenderBody()
+    </div>
+
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

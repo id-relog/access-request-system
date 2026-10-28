@@ -1,0 +1,15 @@
+@model ServiceFormViewModel
+@{
+    ViewData["Title"] = "Изменить сервис";
+}
+
+<div class="card p-4">
+    <h3 class="mb-3">Изменить сервис</h3>
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <form asp-controller="Admin" asp-action="EditService" asp-route-id="@ViewBag.ServiceId" method="post">
+        @await Html.PartialAsync("_ServiceFormFields", Model)
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+</div>

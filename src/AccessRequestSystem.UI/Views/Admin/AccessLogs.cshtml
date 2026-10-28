@@ -1,0 +1,82 @@
+@model List<AccessLogDto>
+@{
+    ViewData["Title"] = "Логи доступа";
+    var search = ViewBag.Search as string;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h3 class="mb-0">Логи проверок доступа</h3>
+    <span class="text-muted small">Каждая строка — запрос прокси-агента: пропустить сайт или заблокировать</span>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-6 col-lg-5">
+        <input type="search" name="q" value="@search" class="form-control"
+               placeholder="Поиск: email, ФИО, должность, подразделение…" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Найти</button>
+        @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <a asp-action="AccessLogs" class="btn btn-outline-secondary">Сбросить</a>
+        }
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        @if (!string.IsNullOrWhiteSpace(search))
+        {
+            <text>По запросу «@search» ничего не найдено.</text>
+        }
+        else
+        {
+            <text>
+                Логов пока нет. Они появятся, как только прокси-агент начнёт присылать проверки на
+                <code>/api/access/check</code>.
+            </text>
+        }
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-sm table-hover bg-white align-middle">
+            <thead>
+                <tr>
+                    <th>Время</th>
+                    <th>Пользователь</th>
+                    <th>Домен</th>
+                    <th>Результат</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model)
+                {
+                    <tr>
+                        <td class="small">@log.CheckedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm:ss")</td>
+                        <td class="small">
+                            @if (!string.IsNullOrWhiteSpace(log.EmployeeFullName))
+                            {
+                                <div>@log.EmployeeFullName</div>
+                            }
+                            <div class="@(string.IsNullOrWhiteSpace(log.EmployeeFullName) ? "" : "text-muted")">@log.UserEmail</div>
+                        </td>
+                        <td><code>@log.Domain</code></td>
+                        <td>
+                            @if (log.Allowed)
+                            {
+                                <span class="badge bg-success">разрешено</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">заблокировано</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

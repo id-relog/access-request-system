@@ -1,0 +1,66 @@
+@model List<AccessRequestDto>
+@{
+    ViewData["Title"] = "Мои заявки";
+
+    string BadgeClass(RequestStatus status) => status switch
+    {
+        RequestStatus.Pending => "bg-warning text-dark",
+        RequestStatus.Approved => "bg-success",
+        RequestStatus.Rejected => "bg-danger",
+        RequestStatus.Expired => "bg-secondary",
+        _ => "bg-secondary"
+    };
+
+    string StatusText(RequestStatus status) => status switch
+    {
+        RequestStatus.Pending => "На рассмотрении",
+        RequestStatus.Approved => "Одобрено",
+        RequestStatus.Rejected => "Отклонено",
+        RequestStatus.Expired => "Истёк срок",
+        _ => status.ToString()
+    };
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>Мои заявки</h3>
+    <a class="btn btn-primary" asp-controller="Requests" asp-action="Create">+ Новая заявка</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Заявок пока нет.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover bg-white">
+            <thead>
+                <tr>
+                    <th>Сервис</th>
+                    <th>Период доступа</th>
+                    <th>Статус</th>
+                    <th>Подана</th>
+                    <th>Комментарий администратора</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>
+                            @r.ServiceName
+                            @if (r.IsCustomService)
+                            {
+                                <span class="badge bg-light text-dark border">вручную</span>
+                            }
+                        </td>
+                        <td>@r.AccessFrom.ToString("dd.MM.yyyy") — @r.AccessTo.ToString("dd.MM.yyyy")</td>
+                        <td><span class="badge @BadgeClass(r.Status)">@StatusText(r.Status)</span></td>
+                        <td>@r.RequestedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@r.ReviewComment</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
